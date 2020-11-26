@@ -101,6 +101,8 @@ exports.getcamp = async function (req, res) {
         if (camp) {
             res.status(200).json(camp);
 
+        } else {
+            res.status(400).json({message:"Error occured"})
         }
     } catch (err) {
         res.status(400).json({message:"Error occured"})
@@ -198,6 +200,7 @@ exports.addWork = async function (req, res) {
 exports.getcampWork = async function (req, res) {
     try {
         const { camp_id, work_id } = req.params;
+        console.log(req.params)
         let campdetails = {};
         const camp = await Camp.findOne({ _id: camp_id });
         if (camp) {

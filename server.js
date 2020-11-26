@@ -10,7 +10,7 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 require("./service/routes")(app);
 
-mongoose.connect("mongodb://localhost:27017/nejsapp", {
+mongoose.connect("mongodb+srv://priyam1103:priyam7035@cluster0.w6j7n.mongodb.net/workcamp?retryWrites=true&w=majority", {
     useCreateIndex: true,
     useFindAndModify: false,
     useNewUrlParser: true,
