@@ -18,7 +18,7 @@ mongoose.connect("mongodb+srv://priyam1103:priyam7035@cluster0.w6j7n.mongodb.net
   }).then(() => {
     console.log("Connected to MongoDB");
   const PORT =  3005;
-  app.listen(PORT, () => {
+  app.listen(process.env.PORT || PORT, () => {
     console.log("Listening on port: " + PORT);
   });
 })
