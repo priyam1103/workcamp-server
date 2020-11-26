@@ -208,13 +208,14 @@ exports.getcampWork = async function (req, res) {
                 if (item.work_id == work_id) {
                     campdetails = item;
                     const data ={...campdetails,campname:camp.campname,campcode:camp.campcode,members:camp.members}
-                    res.status(200).json(data);
+                   return res.status(200).json(data);
                     
                 }
             })
         } else {
             res.status(400).json({ message: "error" });
         }
+        res.status(400).json({ message: "error" });
     } catch (err) {
         console.log(err)
         console.log(err)
