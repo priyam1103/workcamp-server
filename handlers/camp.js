@@ -97,9 +97,20 @@ exports.mycamps = async function (req, res) {
 exports.getcamp = async function (req, res) {
     try {
         const { camp_id } = req.params;
+        const verified = false;
         const camp = await Camp.findOne({ _id: camp_id });
         if (camp) {
-            res.status(200).json(camp);
+            for (var k = 0; k < camp.members.length; k++){
+                if (camp.members[k]._id == res.locals._id) {
+                    verified = true;
+                    break;
+                }
+            }
+            if (verified) {
+                res.status(200).json(camp);
+            } else {
+                res.status(400).json({message:"Error occured"})
+            }
 
         } else {
             res.status(400).json({message:"Error occured"})
@@ -200,18 +211,28 @@ exports.addWork = async function (req, res) {
 exports.getcampWork = async function (req, res) {
     try {
         const { camp_id, work_id } = req.params;
-        console.log(req.params)
+        const verified = false;
         let campdetails = {};
         const camp = await Camp.findOne({ _id: camp_id });
         if (camp) {
-            camp.camptimeline.map((item, index) => {
-                if (item.work_id == work_id) {
-                    campdetails = item;
-                    const data ={...campdetails,campname:camp.campname,campcode:camp.campcode,members:camp.members}
-                   return res.status(200).json(data);
-                    
+            for (var k = 0; k < camp.members.length; k++){
+                if (camp.members[k]._id == res.locals._id) {
+                    verified = true;
+                    break;
                 }
-            })
+            }
+            if (verified) {
+                camp.camptimeline.map((item, index) => {
+                    if (item.work_id == work_id) {
+                        campdetails = item;
+                        const data = { ...campdetails, campname: camp.campname, campcode: camp.campcode, members: camp.members }
+                        return res.status(200).json(data);
+                    
+                    }
+                })
+            } else {
+                res.status(400).json({ message: "error" });  
+            }
         } else {
             res.status(400).json({ message: "error" });
         }
