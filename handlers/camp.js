@@ -67,9 +67,12 @@ exports.joinCamp = async function (req, res) {
 exports.mycamps = async function (req, res) {
     try {
         const user = await User.findOne({ _id: res.locals._id });
-        console.log(user)
+     
         let camps = [];
-        new Promise(async(resolve,reject) => {
+        new Promise(async (resolve, reject) => {
+            if (user.camps.length == 0) {
+                resolve()
+            }
             await user.camps.map(async(item, index) => {
                 const camp_= await Camp.findOne({ _id: item });
                 camps.push(camp_);
@@ -82,7 +85,7 @@ exports.mycamps = async function (req, res) {
             })
       
         }).then(() => {
-            console.log(camps)
+            
             res.status(200).json({camps});
         })
         
@@ -97,15 +100,22 @@ exports.mycamps = async function (req, res) {
 exports.getcamp = async function (req, res) {
     try {
         const { camp_id } = req.params;
-        const verified = false;
+        var verified = false;
         const camp = await Camp.findOne({ _id: camp_id });
         if (camp) {
-            for (var k = 0; k < camp.members.length; k++){
-                if (camp.members[k]._id == res.locals._id) {
-                    verified = true;
-                    break;
+            new Promise((resolve,reject) => {
+                for (var k = 0; k < camp.members.length; k++) {
+                    console.log(camp.members[k]._id)
+                    if (camp.members[k]._id.toString() == res.locals._id.toString()) {
+                        verified = true;
+                        resolve();
+                        break;
+                    } else if (k == camp.members.length - 1) {
+                        resolve();
+                    }
                 }
-            }
+            })
+            console.log(verified)
             if (verified) {
                 res.status(200).json(camp);
             } else {
@@ -211,16 +221,22 @@ exports.addWork = async function (req, res) {
 exports.getcampWork = async function (req, res) {
     try {
         const { camp_id, work_id } = req.params;
-        const verified = false;
+        var verified = false;
         let campdetails = {};
         const camp = await Camp.findOne({ _id: camp_id });
         if (camp) {
-            for (var k = 0; k < camp.members.length; k++){
-                if (camp.members[k]._id == res.locals._id) {
-                    verified = true;
-                    break;
+            new Promise((resolve,reject) => {
+                for (var k = 0; k < camp.members.length; k++) {
+                    console.log(camp.members[k]._id)
+                    if (camp.members[k]._id.toString() == res.locals._id.toString()) {
+                        verified = true;
+                        resolve();
+                        break;
+                    } else if (k == camp.members.length - 1) {
+                        resolve();
+                    }
                 }
-            }
+            })
             if (verified) {
                 camp.camptimeline.map((item, index) => {
                     if (item.work_id == work_id) {
@@ -236,7 +252,7 @@ exports.getcampWork = async function (req, res) {
         } else {
             res.status(400).json({ message: "error" });
         }
-        res.status(400).json({ message: "error" });
+        
     } catch (err) {
         console.log(err)
         console.log(err)
